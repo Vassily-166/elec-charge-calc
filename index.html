@@ -42,16 +42,6 @@
                 </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Votre Option Tarifaire</label>
-                <select id="select-tarif" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
-                    <option value="base">Tarif Réglementé (Option Base)</option>
-                    <option value="hc">Tarif Réglementé (Heures Creuses)</option>
-                    <option value="hp">Tarif Réglementé (Heures Pleines)</option>
-                    <option value="tempo">EDF Tempo (Couleur du jour dynamique 🔄)</option>
-                </select>
-            </div>
-
             <div class="flex items-center justify-between pt-2 border-t border-gray-100">
                 <div>
                     <span class="text-sm font-semibold text-gray-700 block">Mode Expert (Rendement Réel)</span>
@@ -65,16 +55,68 @@
 
             <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100 text-center space-y-1">
                 <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">Estimation du coût</span>
-                <div class="text-4xl font-black text-blue-900"><span id="resultat-prix">0.00</span> €</div>
-                <span class="text-xs text-gray-500 block">Énergie consommée : <span id="resultat-kwh">0.0</span> kWh (Pertes incluses)</span>
+                <div class="text-2xl font-black text-blue-900">Base EDF: <span id="resultat-prix-base">0.00</span> €</div>
+                <div class="text-2xl font-black text-blue-900">Heures Creuses EDF: <span id="resultat-prix-creuses">0.00</span> €</div>
+                <div class="text-2xl font-black text-blue-900">Heures Pleines EDF: <span id="resultat-prix-pleines">0.00</span> €</div>
+                <div class="text-2xl font-black text-blue-900">Tempo Heures Creuses EDF: <span id="resultat-prix-tempo-creuses">0.00</span> €</div>
+                <div class="text-2xl font-black text-blue-900">Tempo Heures Pleines EDF: <span id="resultat-prix-tempo-pleines">0.00</span> €</div>
+                <span class="text-xs text-gray-500 block">Énergie consommée : <span id="resultat-kwh">0.0</span> kWh (Pertes incluses: <span id="rendement-voiture">15</span>% de perte)</span>
                 <span id="badge-tempo" class="mt-2 px-3 py-1 text-xs font-bold rounded-full" style="display: none;"></span>
             </div>
+        </div>
+
+        <div class="mt-6 bg-white p-6 rounded-2xl border border-gray-150 shadow-sm">
+            <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <span>📊</span> Tarifs de l'électricité appliqués (€/kWh)
+            </h3>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-600">
+                    <thead>
+                        <tr class="border-b border-gray-150 text-xs font-semibold text-gray-400 uppercase">
+                            <th class="py-2">Option Tarif Bleu</th>
+                            <th class="py-2">Heures Creuses (HC)</th>
+                            <th class="py-2">Heures Pleines (HP) / Base</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr>
+                            <td class="py-2.5 font-medium text-gray-800">Option Base</td>
+                            <td class="py-2.5 text-gray-400">-</td>
+                            <td class="py-2.5 font-semibold text-blue-600"><span id="tab-base">-.----</span> €</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 font-medium text-gray-800">Heures Creuses / Pleines</td>
+                            <td class="py-2.5 font-semibold text-green-600"><span id="tab-hc">-.----</span> €</td>
+                            <td class="py-2.5 font-semibold text-orange-600"><span id="tab-hp">-.----</span> €</td>
+                        </tr>
+                        <tr id="row-tempo-bleu" class="transition-colors duration-200">
+                            <td class="py-2.5 font-medium text-gray-800">Tempo BLEU</td>
+                            <td class="py-2.5 font-semibold text-gray-600"><span id="tab-t-bleu-hc">-.----</span> €</td>
+                            <td class="py-2.5 font-semibold text-gray-700"><span id="tab-t-bleu-hp">-.----</span> €</td>
+                        </tr>
+                        <tr id="row-tempo-blanc" class="transition-colors duration-200">
+                            <td class="py-2.5 font-medium text-gray-700">Tempo BLANC</td>
+                            <td class="py-2.5 font-semibold text-gray-600"><span id="tab-t-blanc-hc">-.----</span> €</td>
+                            <td class="py-2.5 font-semibold text-gray-800"><span id="tab-t-blanc-hp">-.----</span> €</td>
+                        </tr>
+                        <tr id="row-tempo-rouge" class="transition-colors duration-200">
+                            <td class="py-2.5 font-medium text-gray-700">Tempo ROUGE</td>
+                            <td class="py-2.5 font-semibold text-gray-600"><span id="tab-t-rouge-hc">-.----</span> €</td>
+                            <td class="py-2.5 font-semibold text-gray-800"><span id="tab-t-rouge-hp">-.----</span> €</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-[11px] text-gray-400 mt-3 text-right">
+                Grille tarifaire officielle du Tarif Réglementé (TRV EDF) mise à jour manuellement.
+            </p>
         </div>
 
         <section class="mt-8 bg-white p-6 rounded-2xl border border-gray-100 space-y-4">
             <h2 class="text-lg font-bold text-gray-900">Comment est calculé le prix de votre recharge ?</h2>
             <p class="text-sm text-gray-600 leading-relaxed">
-                Ce simulateur utilise les tarifs réglementés de l'électricité mis à jour en direct. Le calcul prend en considération l'énergie nécessaire pour passer du niveau initial au niveau cible sur la capacité utile de la batterie. De plus, l'outil intègre les pertes de charge par effet joule (le rendement de conversion du chargeur de la voiture), garantissant un calcul fidèle à ce qui sera réellement facturé sur votre compteur Linky.
+                Ce simulateur utilise les tarifs réglementés de l'électricité mis à jour. Le calcul prend en considération l'énergie nécessaire pour passer du niveau initial au niveau cible sur la capacité utile de la batterie. De plus, l'outil intègre les pertes de charge par effet joule (le rendement de conversion du chargeur de la voiture), garantissant un calcul fidèle à ce qui sera réellement facturé sur votre compteur Linky.
             </p>
         </section>
     </main>
